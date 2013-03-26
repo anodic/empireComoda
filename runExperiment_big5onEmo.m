@@ -1,66 +1,82 @@
 %% settings
 dataLocation = 'LDOS-CoMoDa-forEMPIRE.xls';
+personalityProfileLocation = 'big5_working.xlsx';
 
 minRatingsPerUser = 25;
-minRatingsPerClass = 5;
+minRatingsPerClass = 10;
+persThreshold = 50;
 
 data = xlsread(dataLocation);
-
+personality = xlsread(personalityProfileLocation);
 %% counting occurences
-% contingency table dVert = home/notHome; dHor = alone/notAlone
+% contingency table dVert = neutral/notneutral; dHor = alone/notAlone
 
-neutralTable = zeros(2,2);
-notNeutralTable = zeros(2,2);
+% column 14 = endEmo; column 13 = social;
 
-% neutral
-for i = 1: size(data,1)
+persParams = [1,2,4];
+
+for k = 1:length(persParams)
     
-   % home+alone
-   if (data(i,11)==1 && data(i,13)==1 && data(i,14)==7)
-       neutralTable(1,1) = neutralTable(1,1)+1;    
-   % home+company
-   elseif (data(i,11)==1 && data(i,13)~=1 && data(i,14)==7)
-       neutralTable(1,2) = neutralTable(1,2)+1;    
-   % notHome+alone
-   elseif (data(i,11)~=1 && data(i,13)==1 && data(i,14)==7)
-       neutralTable(2,1) = neutralTable(2,1)+1;    
-   % notHome+notAlone
-   elseif (data(i,11)~=1 && data(i,13)~=1 && data(i,14)==7)
-       neutralTable(2,2) = neutralTable(2,2)+1;    
-   else
-       continue;
-   end
-end
-
-disp(neutralTable);
-
-% notNeutral
-for i = 1: size(data,1)
+    personalityParam = persParams(k);
     
-   % home+alone
-   if (data(i,11)==1 && data(i,13)==1 && data(i,14)~=7)
-       notNeutralTable(1,1) = notNeutralTable(1,1)+1;    
-   % home+notAlone
-   elseif (data(i,11)==1 && data(i,13)~=1 && data(i,14)~=7)
-       notNeutralTable(1,2) = notNeutralTable(1,2)+1;    
-   % notHome+alone
-   elseif (data(i,11)~=1 && data(i,13)==1 && data(i,14)~=7)
-       notNeutralTable(2,1) = notNeutralTable(2,1)+1;    
-   % notHome+notAlone
-   elseif (data(i,11)~=1 && data(i,13)~=1 && data(i,14)~=7)
-       notNeutralTable(2,2) = notNeutralTable(2,2)+1;    
-   else
-       continue;
-   end         
+    emotionAndSocialTable = zeros(2,2);
+    
+    
+    % personality param < 50
+    for i = 1: size(data,1)
+        % data(i,[1,2,3,13,14])
+        if (data(i,13)==1 && data(i,14)==7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)<persThreshold )
+            emotionAndSocialTable(1,1) = emotionAndSocialTable(1,1)+1;
+            
+        elseif (data(i,13)==1 && data(i,14)~=7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)<persThreshold )
+            emotionAndSocialTable(2,1) = emotionAndSocialTable(2,1)+1;
+            
+        elseif (data(i,13)~=1 && data(i,14)==7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)<persThreshold )
+            emotionAndSocialTable(1,2) = emotionAndSocialTable(1,2)+1;
+            
+        elseif (data(i,13)~=1 && data(i,14)~=7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)<persThreshold )
+            emotionAndSocialTable(2,2) = emotionAndSocialTable(2,2)+1;
+        else
+            continue;
+        end
+    end
+    
+    disp(['emotion/social table for  persParam ' num2str(personalityParam) ';<50:'])
+    disp(emotionAndSocialTable);
+    
+    notNeutralProportionAverage = sum(emotionAndSocialTable(2,:))/(sum(sum(emotionAndSocialTable)));
+    notNeutralProportionAlone = emotionAndSocialTable(2,1)/sum(emotionAndSocialTable(:,1));
+    notNeutralProportionNotAlone = emotionAndSocialTable(2,2)/sum(emotionAndSocialTable(:,2));
+    
+    disp(['For persParam '  num2str(personalityParam) '; <50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
+    emotionAndSocialTable = zeros(2,2);
+    
+    % personality param >= 50
+    for i = 1: size(data,1)
+        % data(i,[1,2,3,13,14])
+        if (data(i,13)==1 && data(i,14)==7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)>=persThreshold )
+            emotionAndSocialTable(1,1) = emotionAndSocialTable(1,1)+1;
+            
+        elseif (data(i,13)==1 && data(i,14)~=7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)>=persThreshold )
+            emotionAndSocialTable(2,1) = emotionAndSocialTable(2,1)+1;
+            
+        elseif (data(i,13)~=1 && data(i,14)==7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)>=persThreshold )
+            emotionAndSocialTable(1,2) = emotionAndSocialTable(1,2)+1;
+            
+        elseif (data(i,13)~=1 && data(i,14)~=7 && any(personality(:,1) == data(i,1)) &&  personality(find(personality(:,1)==data(i,1)),1+personalityParam)>=persThreshold )
+            emotionAndSocialTable(2,2) = emotionAndSocialTable(2,2)+1;
+        else
+            continue;
+        end
+    end
+    
+    disp(['emotion/social table for  persParam ' num2str(personalityParam) ';>=50:'])
+    disp(emotionAndSocialTable);
+    
+    notNeutralProportionAverage = sum(emotionAndSocialTable(2,:))/(sum(sum(emotionAndSocialTable)));
+    notNeutralProportionAlone = emotionAndSocialTable(2,1)/sum(emotionAndSocialTable(:,1));
+    notNeutralProportionNotAlone = emotionAndSocialTable(2,2)/sum(emotionAndSocialTable(:,2));
+    
+    disp(['For persParam ' num2str(personalityParam) '; >= 50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
+    
 end
-
-disp(notNeutralTable);
-
-% proportion of not neutral
-
-proportionNotNeutralTable = zeros(2,2);
-
-proportionNotNeutralTable=notNeutralTable./(notNeutralTable+neutralTable);
-
-disp(proportionNotNeutralTable);
-
