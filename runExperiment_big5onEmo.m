@@ -13,7 +13,7 @@ personality = xlsread(personalityProfileLocation);
 
 % column 14 = endEmo; column 13 = social;
 
-persParams = [1,2,4];
+persParams = [1,2,3,4,5];
 
 for k = 1:length(persParams)
     
