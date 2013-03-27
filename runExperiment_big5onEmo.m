@@ -18,10 +18,11 @@ persParams = [1,2,4];
 for k = 1:length(persParams)
     
     personalityParam = persParams(k);
-    
     emotionAndSocialTable = zeros(2,2);
     
-    
+    disp(' ')
+    disp('***********NEW PERSONALITY PARAMETER************')
+    disp('-----------parameter<50-------------')
     % personality param < 50
     for i = 1: size(data,1)
         % data(i,[1,2,3,13,14])
@@ -44,12 +45,40 @@ for k = 1:length(persParams)
     disp(['emotion/social table for  persParam ' num2str(personalityParam) ';<50:'])
     disp(emotionAndSocialTable);
     
+    %calculating proportions
     notNeutralProportionAverage = sum(emotionAndSocialTable(2,:))/(sum(sum(emotionAndSocialTable)));
     notNeutralProportionAlone = emotionAndSocialTable(2,1)/sum(emotionAndSocialTable(:,1));
     notNeutralProportionNotAlone = emotionAndSocialTable(2,2)/sum(emotionAndSocialTable(:,2));
     
+    % generating variables for t test 0 = neutral; 1 = emotion 
+    % alone
+    alone = zeros(sum(emotionAndSocialTable(:,1)),1);
+    alone(1:emotionAndSocialTable(2,1))=1;
+    % not alone
+    notAlone = zeros(sum(emotionAndSocialTable(:,2)),1);
+    notAlone(1:emotionAndSocialTable(2,2))=1;
+    % average
+    average = zeros(sum(sum(emotionAndSocialTable)),1);
+    average(1:sum(emotionAndSocialTable(2,:)))=1;
+    
+    % t test alone vs average
+    [h1,p1] = ttest2(alone, average);
+    % t test notAlone vs average
+    [h2,p2] = ttest2(notAlone, average);
+    % t test alone vs notAlone
+    [h3,p3] = ttest2(alone, notAlone);
+           
     disp(['For persParam '  num2str(personalityParam) '; <50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
+    disp(['alone vs average: pVal = ' num2str(p1) '; h = ' num2str(h1) ]);
+    disp(['notAlone vs average: pVal = ' num2str(p2) '; h = ' num2str(h2) ]);
+    disp(['alone vs notAlone: pVal = ' num2str(p3) '; h = ' num2str(h3) ]);
+    
+    %%%%
+    
+    
+    disp('-----------parameter>=50-------------')
     emotionAndSocialTable = zeros(2,2);
+    
     
     % personality param >= 50
     for i = 1: size(data,1)
@@ -77,6 +106,26 @@ for k = 1:length(persParams)
     notNeutralProportionAlone = emotionAndSocialTable(2,1)/sum(emotionAndSocialTable(:,1));
     notNeutralProportionNotAlone = emotionAndSocialTable(2,2)/sum(emotionAndSocialTable(:,2));
     
-    disp(['For persParam ' num2str(personalityParam) '; >= 50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
+    % generating variables for t test 0 = neutral; 1 = emotion 
+    % alone
+    alone = zeros(sum(emotionAndSocialTable(:,1)),1);
+    alone(1:emotionAndSocialTable(2,1))=1;
+    % not alone
+    notAlone = zeros(sum(emotionAndSocialTable(:,2)),1);
+    notAlone(1:emotionAndSocialTable(2,2))=1;
+    % average
+    average = zeros(sum(sum(emotionAndSocialTable)),1);
+    average(1:sum(emotionAndSocialTable(2,:)))=1;
     
+    % t test alone vs average
+    [h1,p1] = ttest2(alone, average);
+    % t test notAlone vs average
+    [h2,p2] = ttest2(notAlone, average);
+    % t test alone vs notAlone
+    [h3,p3] = ttest2(alone, notAlone);
+    
+    disp(['For persParam ' num2str(personalityParam) '; >= 50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
+    disp(['alone vs average: pVal = ' num2str(p1) '; h = ' num2str(h1) ]);
+    disp(['notAlone vs average: pVal = ' num2str(p2) '; h = ' num2str(h2) ]);
+    disp(['alone vs notAlone: pVal = ' num2str(p3) '; h = ' num2str(h3) ]);
 end
