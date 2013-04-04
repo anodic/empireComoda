@@ -69,9 +69,9 @@ for k = 1:length(persParams)
     [h3,p3] = ttest2(alone, notAlone);
            
     disp(['For persParam '  num2str(personalityParam) '; <50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
-    disp(['alone vs average: pVal = ' num2str(p1) '; h = ' num2str(h1) ]);
-    disp(['notAlone vs average: pVal = ' num2str(p2) '; h = ' num2str(h2) ]);
-    disp(['alone vs notAlone: pVal = ' num2str(p3) '; h = ' num2str(h3) ]);
+    disp(['alone vs average: pVal = ' num2str(p1) '; h = ' num2str(h1) '. Sample sizes: ' num2str(length(alone)) ', ' num2str(length(average))]);
+    disp(['notAlone vs average: pVal = ' num2str(p2) '; h = ' num2str(h2) '. Sample sizes: ' num2str(length(notAlone)) ', ' num2str(length(average))]);
+    disp(['alone vs notAlone: pVal = ' num2str(p3) '; h = ' num2str(h3) '. Sample sizes: ' num2str(length(alone)) ', ' num2str(length(notAlone))]);
     
     %%%%
     
@@ -125,7 +125,7 @@ for k = 1:length(persParams)
     [h3,p3] = ttest2(alone, notAlone);
     
     disp(['For persParam ' num2str(personalityParam) '; >= 50: emotion average = ' num2str(notNeutralProportionAverage), '%; emotion when alone =  ' num2str(notNeutralProportionAlone) '%; emotion when with company = ' num2str(notNeutralProportionNotAlone) '%.']);
-    disp(['alone vs average: pVal = ' num2str(p1) '; h = ' num2str(h1) ]);
-    disp(['notAlone vs average: pVal = ' num2str(p2) '; h = ' num2str(h2) ]);
-    disp(['alone vs notAlone: pVal = ' num2str(p3) '; h = ' num2str(h3) ]);
+    disp(['alone vs average: pVal = ' num2str(p1) '; h = ' num2str(h1) '. Sample sizes: ' num2str(length(alone)) ', ' num2str(length(average))]);
+    disp(['notAlone vs average: pVal = ' num2str(p2) '; h = ' num2str(h2) '. Sample sizes: ' num2str(length(notAlone)) ', ' num2str(length(average))]);
+    disp(['alone vs notAlone: pVal = ' num2str(p3) '; h = ' num2str(h3) '. Sample sizes: ' num2str(length(alone)) ', ' num2str(length(notAlone))]);
 end
